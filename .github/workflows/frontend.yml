@@ -1,0 +1,71 @@
+name: Frontend CI/CD
+
+# Trigger on every push to main, and on pull requests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Job 1: Build & Lint Check ────────────────────────────────
+  build:
+    name: Build React App
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download your code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js (required for React/Vite)
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"   # Cache node_modules → faster builds
+
+      # Step 3: Install npm packages
+      - name: Install dependencies
+        run: npm ci   # 'ci' is stricter than 'install' — uses exact versions from package-lock.json
+
+      # Step 4: Build the React app (creates the /dist folder)
+      # Using a dummy API URL for the build check
+      - name: Build app
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://placeholder.railway.app' }}
+        run: npm run build
+
+  # ── Job 2: Deploy to Vercel ──────────────────────────────────
+  # Only runs after build passes AND only on pushes to main (not PRs)
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Install the Vercel CLI tool
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      # Deploy to Vercel production
+      # These secrets are stored in GitHub (we'll set them up)
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel --prod --token $VERCEL_TOKEN
