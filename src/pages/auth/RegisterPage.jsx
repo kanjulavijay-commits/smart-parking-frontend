@@ -6,7 +6,7 @@ import Spinner from '../../components/ui/Spinner'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '', phone_number: '' })
+  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '', password_confirm: '', phone: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -14,10 +14,21 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (form.password !== form.password_confirm) {
+      setError('Passwords do not match.')
+      return
+    }
     setLoading(true)
     setError('')
     try {
-      await authApi.register(form)
+      // Map UI fields to what the backend expects
+      await authApi.register({
+        full_name: `${form.first_name.trim()} ${form.last_name.trim()}`,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+        password_confirm: form.password_confirm,
+      })
       navigate('/login', { state: { registered: true } })
     } catch (err) {
       const data = err.response?.data
@@ -67,12 +78,17 @@ export default function RegisterPage() {
 
             <div>
               <label className="label">Phone Number</label>
-              <input type="tel" className="input" placeholder="+91 98765 43210" value={form.phone_number} onChange={set('phone_number')} />
+              <input type="tel" className="input" placeholder="+91 98765 43210" value={form.phone} onChange={set('phone')} />
             </div>
 
             <div>
               <label className="label">Password</label>
               <input type="password" className="input" placeholder="Min 8 characters" value={form.password} onChange={set('password')} required minLength={8} />
+            </div>
+
+            <div>
+              <label className="label">Confirm Password</label>
+              <input type="password" className="input" placeholder="Re-enter your password" value={form.password_confirm} onChange={set('password_confirm')} required minLength={8} />
             </div>
 
             <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2 mt-2" disabled={loading}>

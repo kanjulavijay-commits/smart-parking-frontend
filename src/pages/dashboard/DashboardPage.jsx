@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CalendarCheck, CreditCard, MapPin, Clock, Plus, ArrowRight } from 'lucide-react'
+import { CalendarCheck, CreditCard, MapPin, Clock, Plus, ArrowRight, TrendingUp } from 'lucide-react'
 import { bookingsApi } from '../../api/bookings'
 import { paymentsApi } from '../../api/payments'
+import { aiApi } from '../../api/ai'
 import useAuthStore from '../../store/authStore'
 import StatCard from '../../components/ui/StatCard'
 import Spinner from '../../components/ui/Spinner'
@@ -18,15 +19,18 @@ export default function DashboardPage() {
   const user = useAuthStore((s) => s.user)
   const [bookings, setBookings]   = useState([])
   const [payments, setPayments]   = useState([])
+  const [forecast, setForecast]   = useState(null)
   const [loading, setLoading]     = useState(true)
 
   useEffect(() => {
     Promise.all([
       bookingsApi.getMyBookings({ limit: 5 }),
       paymentsApi.getMyPayments({ limit: 5 }),
-    ]).then(([b, p]) => {
+      aiApi.getLSTMForecast().catch(() => null),
+    ]).then(([b, p, f]) => {
       setBookings(b.data.results ?? b.data)
       setPayments(p.data.results ?? p.data)
+      if (f) setForecast(f.data)
     }).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
@@ -64,6 +68,43 @@ export default function DashboardPage() {
         <StatCard title="Total Spent"     value={`₹${totalPaid.toFixed(0)}`} icon={CreditCard} color="yellow" />
         <StatCard title="This Month"      value={thisMonthCount(bookings)} icon={Clock}      color="blue" />
       </div>
+
+      {/* LSTM Occupancy Forecast */}
+      {forecast && forecast.next_4_hours && (
+        <div className="card">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-brand-400" />
+              <h2 className="font-semibold text-white">Parking Forecast — Next 4 Hours</h2>
+            </div>
+            <span className="text-xs text-gray-500">AI-powered · updated now</span>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {forecast.next_4_hours.map((h) => (
+              <div key={h.hour} className="bg-gray-800/60 rounded-xl p-3 text-center">
+                <p className="text-xs text-gray-400 mb-2">{h.hour_label}</p>
+                <div className="relative h-16 flex items-end justify-center mb-2">
+                  <div
+                    className="w-8 rounded-t-md transition-all"
+                    style={{
+                      height: `${Math.max(h.occupancy * 64, 6)}px`,
+                      background: h.occupancy > 0.8 ? '#ef4444'
+                               : h.occupancy > 0.6 ? '#f97316'
+                               : h.occupancy > 0.4 ? '#eab308'
+                               : '#22c55e',
+                    }}
+                  />
+                </div>
+                <p className="text-sm font-bold text-white">{h.occupancy_pct}%</p>
+                <p className="text-xs text-gray-500 mt-0.5">{h.label}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-600 mt-3">
+            LSTM model trained on booking patterns · predicted from {forecast.forecast_from}
+          </p>
+        </div>
+      )}
 
       {/* Recent bookings */}
       <div className="card">

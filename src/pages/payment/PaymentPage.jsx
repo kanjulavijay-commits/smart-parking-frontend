@@ -8,25 +8,38 @@ import Spinner from '../../components/ui/Spinner'
 export default function PaymentPage() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
-  const [booking, setBooking] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [paying, setPaying]   = useState(false)
-  const [paid, setPaid]       = useState(false)
-  const [error, setError]     = useState('')
-  const [method, setMethod]   = useState('card')
+  const [booking, setBooking]   = useState(null)
+  const [paymentId, setPaymentId] = useState(null)
+  const [loading, setLoading]   = useState(true)
+  const [paying, setPaying]     = useState(false)
+  const [paid, setPaid]         = useState(false)
+  const [error, setError]       = useState('')
+  const [method, setMethod]     = useState('card')
 
   useEffect(() => {
-    bookingsApi.getBooking(bookingId).then(({ data }) => setBooking(data)).finally(() => setLoading(false))
+    Promise.all([
+      bookingsApi.getBooking(bookingId),
+      paymentsApi.getPaymentByBooking(bookingId),
+    ]).then(([{ data: bk }, { data: pm }]) => {
+      setBooking(bk)
+      const results = pm.results ?? pm
+      if (results.length > 0) setPaymentId(results[0].id)
+    }).finally(() => setLoading(false))
   }, [bookingId])
 
   const handlePay = async () => {
+    if (!paymentId) {
+      setError('No payment record found for this booking.')
+      return
+    }
     setPaying(true)
     setError('')
     try {
-      await paymentsApi.initiatePayment({ booking: bookingId, payment_method: method })
+      await paymentsApi.confirmPayment(paymentId, method)
       setPaid(true)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Payment failed. Please try again.')
+      const d = err.response?.data
+      setError(typeof d === 'object' ? Object.values(d).flat().join(' ') : 'Payment failed. Please try again.')
     } finally {
       setPaying(false)
     }

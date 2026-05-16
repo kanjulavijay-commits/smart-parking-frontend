@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Search, Car, ChevronRight, Layers } from 'lucide-react'
+import { MapPin, Search, Car, ChevronRight, Layers, BarChart2 } from 'lucide-react'
 import { parkingApi } from '../../api/parking'
+import { aiApi } from '../../api/ai'
 import Spinner from '../../components/ui/Spinner'
 import EmptyState from '../../components/ui/EmptyState'
 
@@ -15,6 +16,7 @@ export default function FindParkingPage() {
   const [search, setSearch]     = useState('')
   const [loading, setLoading]   = useState(true)
   const [slotLoading, setSlotLoading] = useState(false)
+  const [rfPrediction, setRfPrediction] = useState(null)
 
   useEffect(() => {
     parkingApi.getLots().then(({ data }) => {
@@ -25,9 +27,18 @@ export default function FindParkingPage() {
   const selectLot = async (lot) => {
     setSelected(lot)
     setSlotLoading(true)
+    setRfPrediction(null)
     try {
-      const { data } = await parkingApi.getSlots({ lot: lot.id, status: 'available' })
-      setSlots(data.results ?? data)
+      const [slotsRes, rfRes] = await Promise.all([
+        parkingApi.getSlots({ lot: lot.id, status: 'available' }),
+        aiApi.getRFPrediction({
+          lot_id: lot.id,
+          hour: new Date().getHours(),
+          day: new Date().getDay() === 0 ? 6 : new Date().getDay() - 1,
+        }).catch(() => null),
+      ])
+      setSlots(slotsRes.data.results ?? slotsRes.data)
+      if (rfRes) setRfPrediction(rfRes.data)
     } finally {
       setSlotLoading(false)
     }
@@ -100,9 +111,21 @@ export default function FindParkingPage() {
 
         {/* Slot grid */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            {selected ? `Slots — ${selected.name}` : 'Select a lot to see slots'}
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              {selected ? `Slots — ${selected.name}` : 'Select a lot to see slots'}
+            </h2>
+            {rfPrediction && (
+              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium ${
+                rfPrediction.status === 'high'   ? 'bg-emerald-900/40 text-emerald-400' :
+                rfPrediction.status === 'medium' ? 'bg-yellow-900/40 text-yellow-400'  :
+                                                   'bg-red-900/40 text-red-400'
+              }`}>
+                <BarChart2 className="w-3 h-3" />
+                AI: {rfPrediction.label}
+              </div>
+            )}
+          </div>
 
           {!selected ? (
             <div className="card flex flex-col items-center justify-center py-16 text-center">

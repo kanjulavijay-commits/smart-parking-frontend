@@ -26,8 +26,12 @@ export default function BookingDetailPage() {
   }, [id])
 
   const loadQR = async () => {
-    const { data } = await bookingsApi.getQRCode(id)
-    setQr(data.qr_image || data.qr_code)
+    try {
+      const { data } = await bookingsApi.getQRCode(id)
+      setQr(data.qr_image_url)
+    } catch {
+      // QR not ready yet
+    }
   }
 
   const cancel = async () => {
