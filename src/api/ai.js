@@ -10,6 +10,9 @@ export const aiApi = {
   getDatasetStatus: () =>
     client.get('/api/ai/dataset-status/'),
 
+  getAiStats: () =>
+    client.get('/api/ai/stats/'),
+
   mockAnalyze: (lotId) =>
     client.post('/api/ai/mock-analyze/', { lot_id: lotId }),
 }
