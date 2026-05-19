@@ -6,7 +6,12 @@ import { authApi } from '../../api/auth'
 import useAuthStore from '../../store/authStore'
 import Spinner from '../../components/ui/Spinner'
 
-const AI_BADGES = ['CNN', 'RF', 'LSTM', 'SVM']
+const GridBg = () => (
+  <div className="absolute inset-0 pointer-events-none" style={{
+    backgroundImage: 'linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px)',
+    backgroundSize: '50px 50px',
+  }} />
+)
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -27,134 +32,103 @@ export default function LoginPage() {
       setUser(profile.data)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid email or password.')
+      setError(err.response?.data?.detail || 'Invalid credentials.')
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated orbs */}
-      <div className="absolute top-1/4 -left-24 w-80 h-80 bg-brand-600/20 rounded-full blur-[100px] animate-blob" />
-      <div className="absolute bottom-1/4 -right-24 w-80 h-80 bg-purple-600/15 rounded-full blur-[100px] animate-blob animation-delay-2000" />
-      <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-emerald-600/10 rounded-full blur-[80px] animate-blob animation-delay-4000" />
+  const inputClass = "w-full bg-white/3 border border-white/8 text-white rounded-xl px-4 py-3.5 placeholder-gray-700 focus:outline-none focus:border-brand-500/60 focus:ring-1 focus:ring-brand-500/30 transition-all duration-200 font-mono text-sm"
 
-      <div className="relative z-10 w-full max-w-md">
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      <GridBg />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
+      <div className="absolute bottom-0 right-1/4 w-px h-1/2 bg-gradient-to-t from-brand-500/20 to-transparent" />
+
+      <div className="relative z-10 w-full max-w-sm">
         {/* Logo */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-center gap-2.5 mb-8"
-        >
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-brand-500/30">
-            <MapPin className="w-6 h-6 text-white" />
+        <motion.div initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-center mb-10">
+          <div className="inline-flex items-center gap-2.5 mb-2">
+            <div className="w-10 h-10 bg-brand-500 rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-black" />
+            </div>
+            <span className="text-xl font-black tracking-tight">PARK<span className="text-brand-500">SMART</span></span>
           </div>
-          <span className="text-2xl font-black bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            ParkSmart
-          </span>
+          <p className="text-[10px] font-mono text-brand-500/60 uppercase tracking-[0.3em]">// COMMAND ACCESS</p>
         </motion.div>
 
-        {/* Glass card */}
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
-          className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="border border-white/8 bg-white/2 rounded-2xl p-8"
         >
-          <h1 className="text-2xl font-black text-white mb-1">Welcome back</h1>
-          <p className="text-sm text-gray-500 mb-6">Sign in to your smart parking account</p>
+          <div className="flex items-center justify-between mb-7">
+            <div>
+              <h1 className="text-xl font-black text-white tracking-tight">SIGN IN</h1>
+              <p className="text-xs font-mono text-gray-600 mt-0.5">ENTER YOUR CREDENTIALS</p>
+            </div>
+            <div className="flex gap-1.5">
+              {['CNN','RF','LSTM','SVM'].map(m => (
+                <span key={m} className="text-[8px] font-mono text-brand-500/50 border border-brand-500/20 rounded px-1 py-0.5">{m}</span>
+              ))}
+            </div>
+          </div>
 
           {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-2xl px-4 py-3 mb-5"
-            >
-              {error}
+            <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+              className="bg-red-500/8 border border-red-500/20 text-red-400 text-xs font-mono rounded-xl px-4 py-3 mb-5 uppercase tracking-wide">
+              ⚠ {error}
             </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-              <input
-                type="email"
-                className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-4 py-3 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200 backdrop-blur-sm"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                required
-              />
+              <label className="block text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2">EMAIL ADDRESS</label>
+              <input type="email" className={inputClass} placeholder="you@example.com"
+                value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Password</label>
+              <label className="block text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2">PASSWORD</label>
               <div className="relative">
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  className="w-full bg-white/5 border border-white/10 text-white rounded-2xl px-4 py-3 pr-12 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200 backdrop-blur-sm"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  required
-                />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+                <input type={showPw ? 'text' : 'password'} className={`${inputClass} pr-12`} placeholder="••••••••"
+                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+                <button type="button" onClick={() => setShowPw(!showPw)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               <div className="text-right mt-2">
-                <Link to="/forgot-password" className="text-xs text-brand-400 hover:text-brand-300 transition-colors">
-                  Forgot password?
+                <Link to="/forgot-password" className="text-[10px] font-mono text-gray-600 hover:text-brand-400 transition-colors uppercase tracking-widest">
+                  FORGOT PASSWORD?
                 </Link>
               </div>
             </div>
 
-            <motion.button
-              type="submit"
-              disabled={loading}
+            <motion.button type="submit" disabled={loading}
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold py-3.5 rounded-2xl transition-all duration-300 shadow-xl shadow-brand-600/25 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-400 text-black font-black py-3.5 rounded-xl transition-all duration-200 uppercase tracking-widest text-sm disabled:opacity-50 mt-3"
             >
               {loading ? <Spinner size="sm" /> : <ArrowRight className="w-4 h-4" />}
-              {loading ? 'Signing in…' : 'Sign In'}
+              {loading ? 'AUTHENTICATING...' : 'ACCESS SYSTEM'}
             </motion.button>
           </form>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-center text-sm text-gray-600 mt-5"
-        >
-          Don't have an account?{' '}
-          <Link to="/register" className="text-brand-400 hover:text-brand-300 font-semibold transition-colors">
-            Create one free
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+          className="text-center mt-6 space-y-2">
+          <p className="text-xs font-mono text-gray-600">
+            NO ACCOUNT?{' '}
+            <Link to="/register" className="text-brand-500 hover:text-brand-400 font-bold uppercase transition-colors">
+              REGISTER NOW
+            </Link>
+          </p>
+          <Link to="/" className="text-[10px] font-mono text-gray-700 hover:text-gray-500 transition-colors block">
+            ← BACK TO MISSION CONTROL
           </Link>
-        </motion.p>
-
-        {/* AI status bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="flex items-center justify-center gap-4 mt-6"
-        >
-          {AI_BADGES.map((m) => (
-            <div key={m} className="flex items-center gap-1.5 text-xs text-gray-600">
-              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              {m}
-            </div>
-          ))}
-          <span className="text-xs text-gray-700">· AI Active</span>
-        </motion.div>
-
-        {/* Back to home */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-center mt-4">
-          <Link to="/" className="text-xs text-gray-700 hover:text-gray-500 transition-colors">← Back to home</Link>
         </motion.div>
       </div>
     </div>
