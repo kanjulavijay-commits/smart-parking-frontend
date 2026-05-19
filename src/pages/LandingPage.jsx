@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MapPin, ArrowRight, Zap, Brain, Shield, Music2, Facebook, Twitter, Youtube, Instagram } from 'lucide-react'
+import { MapPin, ArrowRight, Zap, Brain, Shield, Music2, Globe, X, Play, Camera } from 'lucide-react'
 import { SmokeBackground } from '../components/ui/spooky-smoke-animation'
 
 const VIDEO_URL =
@@ -12,7 +12,7 @@ const FOOTER_NAV = {
   Concierge:     ['Get in Touch', 'Legal Privacy', 'User Agreement', 'Report Concern'],
 }
 
-const SOCIALS = [Music2, Facebook, Twitter, Youtube, Instagram]
+const SOCIALS = [Music2, Globe, X, Play, Camera]
 
 const STATS = [
   { value: '2,400+', label: 'Zones Mapped' },
