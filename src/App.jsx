@@ -5,11 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import AppLayout   from './components/layout/AppLayout'
 import AdminLayout from './components/layout/AdminLayout'
 
-// Auth pages
-import LoginPage    from './pages/auth/LoginPage'
-import RegisterPage from './pages/auth/RegisterPage'
+// Pages
+import LandingPage   from './pages/LandingPage'
+import LoginPage     from './pages/auth/LoginPage'
+import RegisterPage  from './pages/auth/RegisterPage'
 
-// App pages
 import DashboardPage     from './pages/dashboard/DashboardPage'
 import ProfilePage       from './pages/dashboard/ProfilePage'
 import NotificationsPage from './pages/dashboard/NotificationsPage'
@@ -19,14 +19,13 @@ import BookingDetailPage from './pages/booking/BookingDetailPage'
 import BookSlotPage      from './pages/booking/BookSlotPage'
 import PaymentPage       from './pages/payment/PaymentPage'
 
-// Admin pages
-import AdminOverviewPage  from './pages/admin/AdminOverviewPage'
-import AdminUsersPage     from './pages/admin/AdminUsersPage'
-import AdminLotsPage      from './pages/admin/AdminLotsPage'
-import AdminBookingsPage  from './pages/admin/AdminBookingsPage'
-import AdminRevenuePage   from './pages/admin/AdminRevenuePage'
-import AdminLivePage      from './pages/admin/AdminLivePage'
-import AdminAuditPage     from './pages/admin/AdminAuditPage'
+import AdminOverviewPage from './pages/admin/AdminOverviewPage'
+import AdminUsersPage    from './pages/admin/AdminUsersPage'
+import AdminLotsPage     from './pages/admin/AdminLotsPage'
+import AdminBookingsPage from './pages/admin/AdminBookingsPage'
+import AdminRevenuePage  from './pages/admin/AdminRevenuePage'
+import AdminLivePage     from './pages/admin/AdminLivePage'
+import AdminAuditPage    from './pages/admin/AdminAuditPage'
 
 const queryClient = new QueryClient()
 
@@ -36,10 +35,11 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public */}
-          <Route path="/login"    element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/"          element={<LandingPage />} />
+          <Route path="/login"     element={<LoginPage />} />
+          <Route path="/register"  element={<RegisterPage />} />
 
-          {/* User app — sidebar + auth guard */}
+          {/* User app — auth guard */}
           <Route element={<AppLayout />}>
             <Route path="/dashboard"      element={<DashboardPage />} />
             <Route path="/parking"        element={<FindParkingPage />} />
@@ -51,19 +51,18 @@ export default function App() {
             <Route path="/profile"        element={<ProfilePage />} />
           </Route>
 
-          {/* Admin panel — purple sidebar + admin-only guard */}
+          {/* Admin panel */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index             element={<AdminOverviewPage />} />
-            <Route path="users"      element={<AdminUsersPage />} />
-            <Route path="lots"       element={<AdminLotsPage />} />
-            <Route path="bookings"   element={<AdminBookingsPage />} />
-            <Route path="revenue"    element={<AdminRevenuePage />} />
-            <Route path="live"       element={<AdminLivePage />} />
-            <Route path="audit"      element={<AdminAuditPage />} />
+            <Route index           element={<AdminOverviewPage />} />
+            <Route path="users"    element={<AdminUsersPage />} />
+            <Route path="lots"     element={<AdminLotsPage />} />
+            <Route path="bookings" element={<AdminBookingsPage />} />
+            <Route path="revenue"  element={<AdminRevenuePage />} />
+            <Route path="live"     element={<AdminLivePage />} />
+            <Route path="audit"    element={<AdminAuditPage />} />
           </Route>
 
-          {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
