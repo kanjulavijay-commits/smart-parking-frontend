@@ -7,46 +7,61 @@
 @layer base {
   * { box-sizing: border-box; }
   body {
-    @apply bg-gray-950 text-gray-100 font-sans antialiased;
+    @apply bg-black text-gray-100 font-sans antialiased;
     margin: 0;
   }
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { @apply bg-gray-950; }
-  ::-webkit-scrollbar-thumb { @apply bg-gray-700 rounded-full; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 9999px; }
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.4);
+    cursor: pointer;
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-brand-600 hover:bg-brand-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-brand-500 hover:bg-brand-400 text-black font-black px-5 py-2.5 rounded-xl transition-all duration-200 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-secondary {
-    @apply bg-gray-800 hover:bg-gray-700 text-gray-100 font-semibold px-5 py-2.5 rounded-xl transition-all duration-200;
+    @apply bg-black hover:bg-white/4 text-gray-400 hover:text-white font-bold px-5 py-2.5 rounded-xl border border-white/8 hover:border-white/14 transition-all duration-200 text-xs uppercase tracking-widest;
   }
   .card {
-    @apply bg-white/3 border border-white/8 rounded-2xl p-6;
+    @apply bg-black border border-white/8 rounded-2xl p-6;
   }
   .input {
-    @apply w-full bg-white/5 border border-white/10 text-gray-100 rounded-2xl px-4 py-3 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200;
+    @apply w-full bg-black border border-white/8 text-white rounded-xl px-4 py-3 placeholder-gray-700 focus:outline-none focus:border-brand-500/40 focus:ring-1 focus:ring-brand-500/20 transition-all font-mono text-sm;
   }
   .label {
-    @apply block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2;
+    @apply block text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-1.5;
   }
-  .badge-green  { @apply inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full; }
-  .badge-yellow { @apply inline-flex items-center gap-1 bg-yellow-500/10  border border-yellow-500/20  text-yellow-400  text-xs font-semibold px-3 py-1 rounded-full; }
-  .badge-red    { @apply inline-flex items-center gap-1 bg-red-500/10     border border-red-500/20     text-red-400     text-xs font-semibold px-3 py-1 rounded-full; }
-  .badge-blue   { @apply inline-flex items-center gap-1 bg-brand-500/10   border border-brand-500/20   text-brand-400   text-xs font-semibold px-3 py-1 rounded-full; }
+  .badge-green  { @apply inline-flex items-center gap-1 bg-emerald-500/8 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold px-2.5 py-1 rounded-lg uppercase tracking-widest; }
+  .badge-yellow { @apply inline-flex items-center gap-1 bg-yellow-500/8  border border-yellow-500/20  text-yellow-400  text-[9px] font-mono font-bold px-2.5 py-1 rounded-lg uppercase tracking-widest; }
+  .badge-red    { @apply inline-flex items-center gap-1 bg-red-500/8     border border-red-500/20     text-red-400     text-[9px] font-mono font-bold px-2.5 py-1 rounded-lg uppercase tracking-widest; }
+  .badge-blue   { @apply inline-flex items-center gap-1 bg-brand-500/8   border border-brand-500/20   text-brand-400   text-[9px] font-mono font-bold px-2.5 py-1 rounded-lg uppercase tracking-widest; }
   .glass {
-    @apply bg-white/5 backdrop-blur-2xl border border-white/10;
+    @apply bg-white/4 backdrop-blur-2xl border border-white/10;
   }
 }
 
 @layer utilities {
   .animation-delay-2000 { animation-delay: 2s; }
   .animation-delay-4000 { animation-delay: 4s; }
-  .text-gradient {
-    @apply bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent;
-  }
-  .border-white\/8 { border-color: rgba(255,255,255,0.08); }
+  .border-white\/6  { border-color: rgba(255,255,255,0.06); }
+  .border-white\/8  { border-color: rgba(255,255,255,0.08); }
+  .border-white\/12 { border-color: rgba(255,255,255,0.12); }
+  .border-white\/14 { border-color: rgba(255,255,255,0.14); }
+  .bg-white\/2 { background-color: rgba(255,255,255,0.02); }
   .bg-white\/3 { background-color: rgba(255,255,255,0.03); }
+  .bg-white\/4 { background-color: rgba(255,255,255,0.04); }
   .bg-white\/6 { background-color: rgba(255,255,255,0.06); }
+  .bg-brand-500\/3 { background-color: rgba(249,115,22,0.03); }
+  .bg-brand-500\/5 { background-color: rgba(249,115,22,0.05); }
+  .bg-brand-500\/8 { background-color: rgba(249,115,22,0.08); }
+  .bg-emerald-500\/8 { background-color: rgba(16,185,129,0.08); }
+  .bg-yellow-500\/8  { background-color: rgba(234,179,8,0.08); }
+  .bg-red-500\/8     { background-color: rgba(239,68,68,0.08); }
+  .hover\:bg-white\/4:hover { background-color: rgba(255,255,255,0.04); }
+  .hover\:bg-red-500\/8:hover { background-color: rgba(239,68,68,0.08); }
+  .hover\:bg-brand-500\/20:hover { background-color: rgba(249,115,22,0.20); }
 }
