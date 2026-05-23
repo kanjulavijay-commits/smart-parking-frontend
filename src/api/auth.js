@@ -9,5 +9,5 @@ export const authApi = {
   forgotPassword:     (data) => client.post('/api/auth/forgot-password/', data),
   resetPassword:      (data) => client.post('/api/auth/reset-password/', data),
   getProfile:         ()     => client.get('/api/users/me/'),
-  updateProfile:      (data) => client.patch('/api/users/me/', data),
+  updateProfile:      (data) => client.patch('/api/users/me/update/', data),
 }

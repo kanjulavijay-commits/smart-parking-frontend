@@ -9,7 +9,7 @@ const fade = { hidden: { opacity: 0, y: 16 }, visible: (i) => ({ opacity: 1, y: 
 
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore()
-  const [form, setForm]     = useState({ full_name: user?.full_name || '', phone_number: user?.phone_number || '' })
+  const [form, setForm]     = useState({ full_name: user?.full_name || '', phone: user?.phone || '' })
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError]   = useState('')
@@ -60,7 +60,7 @@ export default function ProfilePage() {
             <p className="text-xs font-mono text-gray-500">{user?.email}</p>
             <div className="flex items-center gap-2 mt-2">
               <ShieldCheck className="w-3 h-3 text-brand-400" />
-              <span className="text-[9px] font-mono text-brand-400 uppercase tracking-widest">{user?.role || 'USER'}</span>
+              <span className="text-[9px] font-mono text-brand-400 uppercase tracking-widest">{user?.role?.name || 'USER'}</span>
             </div>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
           <label className={labelClass}>PHONE <span className="text-gray-700 normal-case font-sans">(optional)</span></label>
           <div className="relative">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
-            <input className={`${inputClass} pl-11`} placeholder="+91 98765 43210" value={form.phone_number} onChange={set('phone_number')} />
+            <input className={`${inputClass} pl-11`} placeholder="+91 98765 43210" value={form.phone} onChange={set('phone')} />
           </div>
         </div>
 

@@ -98,7 +98,7 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
-        {(user?.is_staff || user?.role === 'admin') && (
+        {(user?.is_staff || user?.role?.name === 'admin') && (
           <>
             <div className="h-px my-3" style={{ background: 'rgba(255,255,255,0.05)' }} />
             <p className="text-[9px] text-gray-700 uppercase tracking-widest px-2 mb-2" style={{ fontFamily: 'JetBrains Mono, monospace' }}>ADMIN</p>

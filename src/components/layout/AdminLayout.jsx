@@ -21,7 +21,7 @@ export default function AdminLayout() {
 
   // Only admins (is_staff) can see this layout
   if (!user) return <Navigate to="/login" replace />
-  if (!user.is_staff && user.role !== 'admin') return <Navigate to="/dashboard" replace />
+  if (!user.is_staff && user?.role?.name !== 'admin') return <Navigate to="/dashboard" replace />
 
   return (
     <div className="flex min-h-screen bg-gray-950">
